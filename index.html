@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brobot Companion Lab</title>
+  </head>
+  <body>
+    <div id="app">
+      <section class="stage-area" aria-label="Robot simulation">
+        <div class="top-strip">
+          <div>
+            <span class="app-title">Brobot</span>
+            <span id="connectionState" class="status-pill">Ollama idle</span>
+          </div>
+          <div id="robotState" class="state-readout">curious | cyan_swirl | center</div>
+        </div>
+
+        <div id="robotStage"></div>
+
+        <div class="stage-toolbar" aria-label="Robot quick controls">
+          <button id="resetViewButton" type="button" title="Reset robot view">Reset View</button>
+          <button id="demoHappyButton" type="button" title="Play a happy demo expression">Happy</button>
+          <button id="demoShyButton" type="button" title="Play a shy demo expression">Shy</button>
+          <button id="demoSleepyButton" type="button" title="Play a sleepy demo expression">Sleepy</button>
+        </div>
+      </section>
+
+      <aside class="control-area" aria-label="Interaction controls">
+        <section class="panel-block">
+          <div class="section-title">Model</div>
+          <div class="model-row">
+            <input id="modelInput" type="text" value="gemma4:latest" aria-label="Ollama model" />
+            <button id="refreshModelsButton" type="button">Check</button>
+          </div>
+          <select id="modelSelect" aria-label="Installed Ollama models">
+            <option value="">Installed models</option>
+          </select>
+        </section>
+
+        <section class="panel-block prompt-block">
+          <div class="section-title">System Prompt</div>
+          <textarea id="systemPrompt" spellcheck="false" aria-label="Robot system prompt"></textarea>
+        </section>
+
+        <section class="panel-block media-block">
+          <div class="section-title">Inputs</div>
+          <div class="media-actions">
+            <button id="voiceButton" type="button" title="Start voice input">Voice</button>
+            <button id="imageButton" type="button" title="Attach image">Image</button>
+            <button id="cameraButton" type="button" title="Toggle low-fps camera">Camera</button>
+            <label class="toggle-line">
+              <input id="speakToggle" type="checkbox" checked />
+              Speak
+            </label>
+          </div>
+          <input id="imageInput" type="file" accept="image/*" hidden />
+          <video id="cameraPreview" playsinline muted></video>
+          <canvas id="cameraCanvas" hidden></canvas>
+          <div id="attachmentTray" class="attachment-tray" aria-live="polite"></div>
+        </section>
+
+        <section class="panel-block chat-block">
+          <div id="timeline" class="timeline" aria-live="polite"></div>
+          <form id="chatForm" class="composer">
+            <textarea id="messageInput" placeholder="Say something to Brobot..." rows="3"></textarea>
+            <button id="sendButton" type="submit">Send</button>
+          </form>
+        </section>
+      </aside>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

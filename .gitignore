@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vite/
+artifacts/
+dev-server*.log
+npm-debug.log*
+*.local
