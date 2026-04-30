@@ -444,41 +444,123 @@ export class RobotScene {
 
   updateMotion(elapsed) {
     const action = this.action;
-    const duration = Math.max(0.35, this.motionDuration);
-    const phase = clamp((elapsed - this.motionStart) / duration, 0, 1);
-    const wave = Math.sin(phase * Math.PI * 2);
-    const softStop = Math.sin(phase * Math.PI);
+    const duration = Math.max(0.25, this.motionDuration);
+    const rawPhase = clamp((elapsed - this.motionStart) / duration, 0, 1);
+    const phase = easeInOutSine(rawPhase);
+    const wave = Math.sin(rawPhase * Math.PI * 2);
+    const wave2 = Math.sin(rawPhase * Math.PI * 4);
+    const wave3 = Math.sin(rawPhase * Math.PI * 6);
+    const softStop = Math.sin(rawPhase * Math.PI);
+    const idleBreath = Math.sin(elapsed * 1.15);
+    const idleSway = Math.sin(elapsed * 0.62);
 
     let yaw = action.neck.yaw * DEG_TO_RAD;
     let pitch = action.neck.pitch * DEG_TO_RAD;
     let roll = action.neck.roll * DEG_TO_RAD;
-    let bob = 0;
+    let x = 0;
+    let y = 0.08;
+    let z = 0;
+    let squashX = 1;
+    let squashY = 1;
+
+    yaw += idleSway * 0.012;
+    pitch += idleBreath * 0.01;
+    roll += Math.sin(elapsed * 0.48 + 1.6) * 0.008;
+    y += idleBreath * 0.012;
 
     switch (action.neck.motion) {
       case "nod":
-        pitch += wave * 0.14;
+        pitch += Math.sin(rawPhase * Math.PI * 4) * 0.16 * (1 - rawPhase * 0.2);
+        y += Math.max(0, Math.sin(rawPhase * Math.PI * 4)) * 0.025;
         break;
       case "shake":
-        yaw += wave * 0.18;
+        yaw += wave3 * 0.18 * (1 - rawPhase * 0.15);
+        roll += wave3 * -0.035;
         break;
       case "peek_left":
-        yaw += -0.18 * softStop;
-        roll += -0.09 * softStop;
+        yaw += -0.26 * softStop;
+        roll += -0.14 * softStop;
+        x += -0.06 * softStop;
         break;
       case "peek_right":
-        yaw += 0.18 * softStop;
-        roll += 0.09 * softStop;
+        yaw += 0.26 * softStop;
+        roll += 0.14 * softStop;
+        x += 0.06 * softStop;
         break;
       case "nuzzle":
-        yaw += Math.sin(phase * Math.PI * 3) * 0.08;
-        roll += Math.sin(phase * Math.PI * 2) * 0.1;
+        yaw += Math.sin(rawPhase * Math.PI * 3) * 0.1;
+        pitch += 0.08 * softStop;
+        roll += Math.sin(rawPhase * Math.PI * 2) * 0.12;
+        z += 0.07 * softStop;
         break;
       case "bounce":
-        bob = Math.sin(phase * Math.PI * 3) * 0.05 * (1 - phase * 0.4);
-        pitch += Math.sin(phase * Math.PI * 2) * 0.06;
+        y += Math.max(0, Math.sin(rawPhase * Math.PI * 3)) * 0.08 * (1 - rawPhase * 0.25);
+        pitch += wave * 0.07;
+        squashX += Math.max(0, -wave) * 0.025;
+        squashY -= Math.max(0, -wave) * 0.02;
         break;
       case "listen_scan":
-        yaw += Math.sin(elapsed * 1.4) * 0.12;
+        yaw += Math.sin(elapsed * 1.55) * 0.18;
+        pitch += Math.sin(elapsed * 0.95) * 0.035;
+        roll += Math.sin(elapsed * 1.25) * 0.025;
+        break;
+      case "tilt_left":
+        roll += -0.22 * phase;
+        yaw += -0.07 * phase;
+        break;
+      case "tilt_right":
+        roll += 0.22 * phase;
+        yaw += 0.07 * phase;
+        break;
+      case "shy_sway":
+        yaw += -0.2 * softStop + wave2 * 0.045;
+        roll += -0.18 * softStop + wave * 0.05;
+        pitch += -0.045 * softStop;
+        x += -0.045 * softStop + wave * 0.018;
+        break;
+      case "excited_wiggle":
+        yaw += wave3 * 0.105;
+        roll += wave2 * 0.12;
+        pitch += Math.abs(wave3) * 0.045;
+        y += Math.abs(wave3) * 0.055;
+        squashX += Math.abs(wave2) * 0.03;
+        squashY -= Math.abs(wave2) * 0.02;
+        break;
+      case "startle_pop":
+        {
+          const pop = Math.sin(rawPhase * Math.PI);
+          const recoil = Math.sin(rawPhase * Math.PI * 0.65);
+          pitch += -0.18 * pop;
+          y += 0.14 * pop;
+          z += -0.1 * recoil;
+          roll += wave2 * 0.06;
+          squashX += pop * 0.04;
+          squashY += pop * 0.03;
+        }
+        break;
+      case "sleepy_drift":
+        pitch += -0.12 * phase + Math.sin(elapsed * 0.8) * 0.025;
+        roll += 0.1 * Math.sin(elapsed * 0.42 + 0.7);
+        yaw += 0.04 * Math.sin(elapsed * 0.52);
+        y += -0.035 * phase + Math.sin(elapsed * 0.7) * 0.012;
+        break;
+      case "lean_in":
+        pitch += 0.12 * phase + Math.sin(rawPhase * Math.PI * 2) * 0.025;
+        z += 0.12 * phase;
+        y += 0.025 * phase;
+        break;
+      case "lean_back":
+        pitch += -0.1 * phase;
+        z += -0.12 * phase;
+        y += 0.025 * softStop;
+        roll += Math.sin(rawPhase * Math.PI * 2) * 0.035;
+        break;
+      case "curious_loop":
+        yaw += Math.sin(rawPhase * Math.PI * 2) * 0.18 * softStop;
+        pitch += Math.cos(rawPhase * Math.PI * 2) * 0.075 * softStop;
+        roll += Math.sin(rawPhase * Math.PI * 2 + Math.PI / 3) * 0.08 * softStop;
+        x += Math.sin(rawPhase * Math.PI * 2) * 0.035 * softStop;
+        y += Math.cos(rawPhase * Math.PI * 2) * 0.025 * softStop;
         break;
       default:
         break;
@@ -487,7 +569,12 @@ export class RobotScene {
     this.facePivot.rotation.y = damp(this.facePivot.rotation.y, yaw, 0.16);
     this.facePivot.rotation.x = damp(this.facePivot.rotation.x, pitch, 0.16);
     this.facePivot.rotation.z = damp(this.facePivot.rotation.z, roll, 0.16);
-    this.robotRoot.position.y = damp(this.robotRoot.position.y, 0.08 + bob, 0.18);
+    this.robotRoot.position.x = damp(this.robotRoot.position.x, x, 0.18);
+    this.robotRoot.position.y = damp(this.robotRoot.position.y, y, 0.18);
+    this.robotRoot.position.z = damp(this.robotRoot.position.z, z, 0.18);
+    this.robotRoot.scale.x = damp(this.robotRoot.scale.x, squashX, 0.2);
+    this.robotRoot.scale.y = damp(this.robotRoot.scale.y, squashY, 0.2);
+    this.robotRoot.scale.z = damp(this.robotRoot.scale.z, 1, 0.2);
     this.presentationGroup.rotation.y = damp(this.presentationGroup.rotation.y, this.presentationYaw, 0.18);
     this.presentationGroup.rotation.x = damp(this.presentationGroup.rotation.x, this.presentationPitch, 0.18);
   }
@@ -890,6 +977,10 @@ function roundedRect(ctx, x, y, width, height, radius) {
 
 function damp(current, target, factor) {
   return current + (target - current) * factor;
+}
+
+function easeInOutSine(value) {
+  return -(Math.cos(Math.PI * value) - 1) / 2;
 }
 
 function clamp(value, min, max) {

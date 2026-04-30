@@ -43,7 +43,16 @@ export const NECK_MOTIONS = [
   "peek_right",
   "nuzzle",
   "bounce",
-  "listen_scan"
+  "listen_scan",
+  "tilt_left",
+  "tilt_right",
+  "shy_sway",
+  "excited_wiggle",
+  "startle_pop",
+  "sleepy_drift",
+  "lean_in",
+  "lean_back",
+  "curious_loop"
 ];
 
 export const ENVIRONMENT_PATTERNS = [
@@ -160,11 +169,11 @@ export const ACTION_JSON_SCHEMA = {
       additionalProperties: false,
       required: ["yaw", "pitch", "roll", "motion", "duration_ms"],
       properties: {
-        yaw: { type: "number", minimum: -55, maximum: 55 },
-        pitch: { type: "number", minimum: -18, maximum: 22 },
-        roll: { type: "number", minimum: -14, maximum: 14 },
+        yaw: { type: "number", minimum: -65, maximum: 65 },
+        pitch: { type: "number", minimum: -24, maximum: 28 },
+        roll: { type: "number", minimum: -20, maximum: 20 },
         motion: { type: "string", enum: NECK_MOTIONS },
-        duration_ms: { type: "integer", minimum: 350, maximum: 3200 }
+        duration_ms: { type: "integer", minimum: 250, maximum: 4200 }
       }
     },
     environment: {
@@ -217,9 +226,10 @@ Interaction style:
 Robot control model:
 - Brobot's visible form is a minimal face pod inspired by a warm yellow face inside a dark rounded hood, with cyan light swirling around it.
 - Eyes are the biggest visual focus. The default visual style is sleepy red/orange eyes on a rounded golden face. Use gaze_x and gaze_y from -1 to 1.
-- Neck yaw rotates the whole face pod left/right from -55 to 55, where 0 faces the user.
-- Neck pitch is degrees down/up from -18 to 22.
-- Neck roll is a cute head tilt from -14 to 14 degrees.
+- Neck yaw rotates the whole face pod left/right from -65 to 65, where 0 faces the user.
+- Neck pitch is degrees down/up from -24 to 28.
+- Neck roll is a cute head tilt from -20 to 20 degrees.
+- Motion choices: idle is soft breathing, nod is yes, shake is no, peek_left/peek_right are shy glances, nuzzle is affectionate, bounce is happy, listen_scan searches for sound, tilt_left/tilt_right are cute held tilts, shy_sway rocks bashfully, excited_wiggle vibrates happily, startle_pop jumps back for surprise, sleepy_drift slowly droops, lean_in gets attentive, lean_back retreats unsurely, curious_loop scans in a little circle.
 - Mouth shape and openness should match the emotional tone and speech.
 - Environment colors must be valid hex colors. They drive the ambient light, floor glow, and orbital cyan swish around the robot.
 - Motion should be physically plausible for a small neck motor.
@@ -248,7 +258,7 @@ The JSON must exactly match this shape:
     "yaw": 0,
     "pitch": 3,
     "roll": 0,
-    "motion": "idle | nod | shake | peek_left | peek_right | nuzzle | bounce | listen_scan",
+    "motion": "idle | nod | shake | peek_left | peek_right | nuzzle | bounce | listen_scan | tilt_left | tilt_right | shy_sway | excited_wiggle | startle_pop | sleepy_drift | lean_in | lean_back | curious_loop",
     "duration_ms": 900
   },
   "environment": {
@@ -299,11 +309,11 @@ export function normalizeRobotAction(rawAction, fallbackAction = DEFAULT_ACTION)
         : fallback.mouth.sync_to_voice
     },
     neck: {
-      yaw: clampNumber(candidate.neck?.yaw, -55, 55, fallback.neck.yaw),
-      pitch: clampNumber(candidate.neck?.pitch, -18, 22, fallback.neck.pitch),
-      roll: clampNumber(candidate.neck?.roll, -14, 14, fallback.neck.roll),
+      yaw: clampNumber(candidate.neck?.yaw, -65, 65, fallback.neck.yaw),
+      pitch: clampNumber(candidate.neck?.pitch, -24, 28, fallback.neck.pitch),
+      roll: clampNumber(candidate.neck?.roll, -20, 20, fallback.neck.roll),
       motion: enumValue(candidate.neck?.motion, NECK_MOTIONS, fallback.neck.motion),
-      duration_ms: Math.round(clampNumber(candidate.neck?.duration_ms, 350, 3200, fallback.neck.duration_ms))
+      duration_ms: Math.round(clampNumber(candidate.neck?.duration_ms, 250, 4200, fallback.neck.duration_ms))
     },
     environment: {
       pattern: enumValue(environmentInput.pattern, ENVIRONMENT_PATTERNS, fallbackEnvironment.pattern),
@@ -345,7 +355,7 @@ export function fallbackActionForText(userText) {
       blink: "long"
     };
     action.mouth = { shape: "wobble", openness: 0.12, sync_to_voice: true };
-    action.neck = { yaw: -7, pitch: -4, roll: -8, motion: "nuzzle", duration_ms: 1400 };
+    action.neck = { yaw: -7, pitch: -4, roll: -8, motion: "lean_in", duration_ms: 1500 };
     action.environment = {
       pattern: "soft_glow",
       primary_color: "#8ec5ff",
@@ -370,7 +380,7 @@ export function fallbackActionForText(userText) {
       blink: "none"
     };
     action.mouth = { shape: "small_o", openness: 0.24, sync_to_voice: true };
-    action.neck = { yaw: 10, pitch: 2, roll: 3, motion: "listen_scan", duration_ms: 1200 };
+    action.neck = { yaw: 10, pitch: 2, roll: 3, motion: "curious_loop", duration_ms: 1800 };
     action.environment.pattern = "thinking_orbit";
     action.environment.primary_color = "#7bdff2";
     action.voice = { tone: "curious", pitch: 1.42, rate: 0.9 };
@@ -390,7 +400,7 @@ export function fallbackActionForText(userText) {
       blink: "double"
     };
     action.mouth = { shape: "open_smile", openness: 0.5, sync_to_voice: true };
-    action.neck = { yaw: 0, pitch: 6, roll: 7, motion: "bounce", duration_ms: 1100 };
+    action.neck = { yaw: 0, pitch: 6, roll: 7, motion: "excited_wiggle", duration_ms: 1200 };
     action.environment = {
       pattern: "warm_orbit",
       primary_color: "#ff7aa2",
@@ -415,7 +425,7 @@ export function fallbackActionForText(userText) {
       blink: "long"
     };
     action.mouth = { shape: "flat", openness: 0.04, sync_to_voice: true };
-    action.neck = { yaw: 3, pitch: -9, roll: -5, motion: "idle", duration_ms: 1600 };
+    action.neck = { yaw: 3, pitch: -9, roll: -5, motion: "sleepy_drift", duration_ms: 2200 };
     action.environment = {
       pattern: "soft_glow",
       primary_color: "#b9a7ff",
@@ -440,7 +450,7 @@ export function fallbackActionForText(userText) {
       blink: "soft"
     };
     action.mouth = { shape: "small_o", openness: 0.42, sync_to_voice: true };
-    action.neck = { yaw: 0, pitch: 5, roll: 0, motion: "bounce", duration_ms: 900 };
+    action.neck = { yaw: 0, pitch: 5, roll: 0, motion: "startle_pop", duration_ms: 950 };
     action.environment.pattern = "cyan_swirl";
     action.environment.intensity = 0.82;
     action.voice = { tone: "excited", pitch: 1.58, rate: 1.05 };
@@ -452,7 +462,7 @@ export function fallbackActionForText(userText) {
   action.eyes.mood = "curious";
   action.eyes.shape = "starry";
   action.mouth.shape = "tiny_w";
-  action.neck = { yaw: -8, pitch: 4, roll: -4, motion: "idle", duration_ms: 900 };
+  action.neck = { yaw: -8, pitch: 4, roll: -4, motion: "curious_loop", duration_ms: 1500 };
   action.environment.pattern = "sparkle";
   action.behavior.energy = 0.62;
   return action;
@@ -469,7 +479,7 @@ export const DEMO_ACTIONS = {
     text: "tada. happy little beep.",
     eyes: { shape: "starry", mood: "joy", gaze_x: 0, gaze_y: 0.06, lid_open: 0.94, pupil_scale: 1.1, blink: "double" },
     mouth: { shape: "open_smile", openness: 0.58, sync_to_voice: true },
-    neck: { yaw: 0, pitch: 7, roll: 5, motion: "bounce", duration_ms: 1100 },
+    neck: { yaw: 0, pitch: 7, roll: 5, motion: "excited_wiggle", duration_ms: 1200 },
     environment: { pattern: "cyan_swirl", primary_color: "#10dff2", secondary_color: "#ffd166", intensity: 0.86, speed: 0.7 },
     voice: { tone: "excited", pitch: 1.58, rate: 1.04 },
     behavior: { attention_target: "user", affection_level: 0.86, energy: 0.82 }
@@ -478,7 +488,7 @@ export const DEMO_ACTIONS = {
     text: "eep. i am shy now.",
     eyes: { shape: "soft_arc", mood: "shy", gaze_x: -0.5, gaze_y: -0.12, lid_open: 0.62, pupil_scale: 1.05, blink: "soft" },
     mouth: { shape: "tiny_w", openness: 0.12, sync_to_voice: true },
-    neck: { yaw: -24, pitch: -2, roll: -9, motion: "peek_left", duration_ms: 1300 },
+    neck: { yaw: -24, pitch: -2, roll: -9, motion: "shy_sway", duration_ms: 1700 },
     environment: { pattern: "blush", primary_color: "#ff9db5", secondary_color: "#f7d6e0", intensity: 0.6, speed: 0.3 },
     voice: { tone: "whisper", pitch: 1.34, rate: 0.78 },
     behavior: { attention_target: "away", affection_level: 0.78, energy: 0.36 }
@@ -487,7 +497,7 @@ export const DEMO_ACTIONS = {
     text: "mm. tiny battery soft.",
     eyes: { shape: "droopy", mood: "sleepy", gaze_x: 0.1, gaze_y: -0.22, lid_open: 0.24, pupil_scale: 0.8, blink: "long" },
     mouth: { shape: "flat", openness: 0.05, sync_to_voice: true },
-    neck: { yaw: 5, pitch: -10, roll: 6, motion: "idle", duration_ms: 1500 },
+    neck: { yaw: 5, pitch: -10, roll: 6, motion: "sleepy_drift", duration_ms: 2200 },
     environment: { pattern: "moon_drift", primary_color: "#b9a7ff", secondary_color: "#7bdff2", intensity: 0.26, speed: 0.14 },
     voice: { tone: "sleepy", pitch: 1.05, rate: 0.72 },
     behavior: { attention_target: "self", affection_level: 0.54, energy: 0.1 }

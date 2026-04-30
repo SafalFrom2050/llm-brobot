@@ -68,3 +68,5 @@ The LLM is prompted to output only valid JSON matching `brobot.action.v1`:
   }
 }
 ```
+
+Supported neck motions are `idle`, `nod`, `shake`, `peek_left`, `peek_right`, `nuzzle`, `bounce`, `listen_scan`, `tilt_left`, `tilt_right`, `shy_sway`, `excited_wiggle`, `startle_pop`, `sleepy_drift`, `lean_in`, `lean_back`, and `curious_loop`.
