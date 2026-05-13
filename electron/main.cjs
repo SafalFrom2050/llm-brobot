@@ -6,6 +6,10 @@ const OLLAMA_BASE_URL = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
 const SMOKE_MODE = process.env.BROBOT_SMOKE === "1";
 
 if (SMOKE_MODE) {
+  app.commandLine.appendSwitch("disable-gpu");
+  app.commandLine.appendSwitch("disable-gpu-sandbox");
+  app.commandLine.appendSwitch("in-process-gpu");
+  app.disableHardwareAcceleration();
   const smokeUserData = path.join(process.cwd(), "artifacts", "electron-smoke-profile");
   fs.mkdirSync(smokeUserData, { recursive: true });
   app.setPath("userData", smokeUserData);

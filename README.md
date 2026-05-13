@@ -1,10 +1,14 @@
 # Brobot Companion Lab
 
-![Brobot Companion Lab feature image](assets/brobot-feature.png)
+![Brobot Companion Lab architecture diagram](assets/brobot-feature.svg)
 
 Brobot Companion Lab is a local-first desktop prototype for an expressive AI companion robot. It combines an Electron app shell, a Three.js animated face pod, and structured LLM output from Ollama to turn natural language and media input into visible personality: eyes, mouth, neck motion, voice tone, and ambient lighting.
 
 The project is intentionally designed as a simulation-first robotics lab. The app can run entirely on a laptop, while the control schema is shaped so the same LLM output could later drive physical displays, motors, lights, and speakers.
+
+## App Screenshot
+
+![Brobot Companion Lab desktop screenshot](assets/brobot-app-screenshot.png)
 
 ## Why This Project Exists
 

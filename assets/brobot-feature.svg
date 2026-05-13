@@ -1,0 +1,108 @@
+<svg width="1600" height="520" viewBox="0 0 1600 520" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Brobot local AI companion architecture</title>
+  <desc id="desc">A minimal architecture diagram showing user inputs flowing through Electron, Ollama, a JSON action contract, and a Three.js robot face.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1600" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101513"/>
+      <stop offset="1" stop-color="#171816"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ffd66e"/>
+      <stop offset="1" stop-color="#c5962d"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-30%" width="140%" height="170%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#000000" flood-opacity="0.22"/>
+    </filter>
+    <style>
+      .node { fill: #f4f0e8; stroke: #ded8cb; stroke-width: 2; }
+      .label { fill: #14231f; font: 700 28px Arial, sans-serif; letter-spacing: 0; }
+      .sub { fill: #617169; font: 400 18px Arial, sans-serif; letter-spacing: 0; }
+      .line { stroke: #72d8d6; stroke-width: 4; stroke-linecap: round; }
+      .muted-line { stroke: #d9b75d; stroke-width: 3; stroke-linecap: round; opacity: 0.75; }
+      .icon { stroke: #14231f; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-fill { fill: #14231f; }
+      .accent { fill: #72d8d6; }
+      .amber { fill: #d9a840; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="520" rx="32" fill="url(#background)"/>
+  <g opacity="0.18">
+    <path d="M80 120H1520" stroke="#ffffff" stroke-width="1"/>
+    <path d="M80 260H1520" stroke="#ffffff" stroke-width="1"/>
+    <path d="M80 400H1520" stroke="#ffffff" stroke-width="1"/>
+    <path d="M260 64V456" stroke="#ffffff" stroke-width="1"/>
+    <path d="M520 64V456" stroke="#ffffff" stroke-width="1"/>
+    <path d="M780 64V456" stroke="#ffffff" stroke-width="1"/>
+    <path d="M1040 64V456" stroke="#ffffff" stroke-width="1"/>
+    <path d="M1300 64V456" stroke="#ffffff" stroke-width="1"/>
+  </g>
+
+  <text x="80" y="76" fill="#f4f0e8" font-family="Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="0">Brobot Companion Lab</text>
+  <text x="80" y="112" fill="#9daaa3" font-family="Arial, sans-serif" font-size="20" letter-spacing="0">Local-first LLM control loop for an expressive robot face</text>
+
+  <path class="line" d="M312 260H432"/>
+  <path class="line" d="M590 260H710"/>
+  <path class="line" d="M868 260H988"/>
+  <path class="line" d="M1146 260H1266"/>
+  <circle cx="432" cy="260" r="7" class="accent"/>
+  <circle cx="710" cy="260" r="7" class="accent"/>
+  <circle cx="988" cy="260" r="7" class="accent"/>
+  <circle cx="1266" cy="260" r="7" class="accent"/>
+
+  <g filter="url(#softShadow)">
+    <rect class="node" x="80" y="182" width="232" height="156" rx="24"/>
+    <text class="label" x="116" y="232">Inputs</text>
+    <text class="sub" x="116" y="264">text, voice, vision</text>
+    <path class="icon" d="M122 298h46l18-28 28 44h-92z"/>
+    <circle class="accent" cx="138" cy="282" r="8"/>
+    <path class="icon" d="M238 279v28c0 16-12 28-28 28s-28-12-28-28v-28"/>
+    <path class="icon" d="M210 268v58"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect class="node" x="432" y="182" width="158" height="156" rx="24"/>
+    <text class="label" x="466" y="232">Electron</text>
+    <text class="sub" x="466" y="264">app shell</text>
+    <rect x="472" y="287" width="78" height="42" rx="8" stroke="#14231f" stroke-width="5"/>
+    <path class="icon" d="M488 309h46"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect class="node" x="710" y="182" width="158" height="156" rx="24"/>
+    <text class="label" x="746" y="232">Ollama</text>
+    <text class="sub" x="746" y="264">local LLM</text>
+    <rect x="756" y="286" width="70" height="44" rx="8" stroke="#14231f" stroke-width="5"/>
+    <circle class="accent" cx="810" cy="308" r="6"/>
+    <path class="icon" d="M770 302h22M770 318h22"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect class="node" x="988" y="182" width="158" height="156" rx="24"/>
+    <text class="label" x="1026" y="232">JSON</text>
+    <text class="sub" x="1026" y="264">action contract</text>
+    <path class="icon" d="M1034 292c-13 0-18 9-18 20v8c0 11-5 18-17 18"/>
+    <path class="icon" d="M1100 292c13 0 18 9 18 20v8c0 11 5 18 17 18"/>
+    <circle class="accent" cx="1068" cy="315" r="10"/>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect class="node" x="1266" y="182" width="254" height="156" rx="24"/>
+    <text class="label" x="1302" y="232">Robot Face</text>
+    <text class="sub" x="1302" y="264">Three.js + speech</text>
+    <circle cx="1402" cy="318" r="44" fill="#1f2926" stroke="#14231f" stroke-width="5"/>
+    <circle cx="1402" cy="318" r="36" fill="url(#gold)"/>
+    <ellipse cx="1388" cy="313" rx="8" ry="5" fill="#d95c39"/>
+    <ellipse cx="1416" cy="313" rx="8" ry="5" fill="#d95c39"/>
+    <path d="M1388 335c8 8 20 8 28 0" stroke="#14231f" stroke-width="5" stroke-linecap="round"/>
+    <path class="muted-line" d="M1464 294c12 12 12 36 0 48"/>
+    <path class="line" d="M1480 282c22 22 22 50 0 72"/>
+  </g>
+
+  <g opacity="0.9">
+    <path class="muted-line" d="M774 382c42 24 90 24 132 0"/>
+    <path class="line" d="M756 402c58 36 124 36 182 0"/>
+    <circle cx="848" cy="398" r="5" class="amber"/>
+    <circle cx="920" cy="386" r="5" class="accent"/>
+  </g>
+</svg>
